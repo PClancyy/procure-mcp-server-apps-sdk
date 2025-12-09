@@ -159,7 +159,7 @@ uvicorn shopping_cart_python.main:app --port 8000
 ```
 
 > [!NOTE]  
-> In production you should persist the cart server-side (see `shopping_cart_python/README.md`), but this demo shows the mechanics of keeping state through `widgetSessionId`.
+> In production you should persist the cart server-side (see [shopping_cart_python/README.md](shopping_cart_python/README.md)), but this demo shows the mechanics of keeping state through `widgetSessionId`.
 
 ---
 

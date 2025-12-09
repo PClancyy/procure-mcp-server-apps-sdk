@@ -1,12 +1,6 @@
 # Shopping cart MCP server (Python)
 
-This example shows how to thread shopping-cart state across conversation turns by pairing `_meta["widgetSessionId"]` with `window.openai.widgetState`. The Python server ships a simple `add_to_cart` tool plus a widget that stays in sync even when the user adjusts quantities in the UI between turns.
-
-## Prerequisites
-
-- Node.js 18+ with the repo dependencies installed (`pnpm install`)
-- A built and served asset bundle (`pnpm run build` then `pnpm run serve` from the repo root)
-- Python 3.10+ and a virtual environment (recommended)
+This example shows how to thread state across conversation turns by pairing `_meta["widgetSessionId"]` with `window.openai.widgetState`. The Python server ships a simple `add_to_cart` tool as an example, plus a widget that stays in sync even when the user adjusts quantities in the UI between turns.
 
 ## Installation
 
@@ -26,10 +20,12 @@ In one shell, serve the static assets from the repo root:
 pnpm run serve
 ```
 
-In another shell, start the shopping-cart MCP server:
+In another shell, start the shopping-cart MCP server (from the repo root):
 
 ```bash
-uvicorn main:app --host 0.0.0.0 --port 8000
+python shopping_cart_python/main.py
+# or
+python -m uvicorn shopping_cart_python.main:app --host 0.0.0.0 --port 8000
 ```
 
 The server exposes `GET /mcp` for SSE and `POST /mcp/messages?sessionId=...` for follow-up messages, mirroring the other FastMCP examples.
