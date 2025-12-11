@@ -2,7 +2,6 @@
 
 from __future__ import annotations
 
-import os
 from copy import deepcopy
 from dataclasses import dataclass
 from functools import lru_cache
@@ -13,7 +12,6 @@ from urllib.parse import urlparse
 import mcp.types as types
 from mcp.server.fastmcp import FastMCP
 from mcp.shared.auth import ProtectedResourceMetadata
-from pydantic import AnyHttpUrl
 from starlette.requests import Request
 from starlette.responses import JSONResponse, Response
 
@@ -129,14 +127,8 @@ PAST_ORDERS_DATA = [
     },
 ]
 
-DEFAULT_AUTH_SERVER_URL = "https://dev-65wmmp5d56ev40iy.us.auth0.com/"
-DEFAULT_RESOURCE_SERVER_URL = "http://localhost:8000/mcp"
-
-# Public URLs that describe this resource server plus the authorization server.
-AUTHORIZATION_SERVER_URL = AnyHttpUrl(
-    os.environ.get("AUTHORIZATION_SERVER_URL", DEFAULT_AUTH_SERVER_URL)
-)
-RESOURCE_SERVER_URL = os.environ.get("RESOURCE_SERVER_URL", DEFAULT_RESOURCE_SERVER_URL)
+AUTHORIZATION_SERVER_URL = "https://dev-65wmmp5d56ev40iy.us.auth0.com/"
+RESOURCE_SERVER_URL = "https://945c890ee720.ngrok-free.app/mcp"
 
 print("AUTHORIZATION_SERVER_URL", AUTHORIZATION_SERVER_URL)
 print("RESOURCE_SERVER_URL", RESOURCE_SERVER_URL)
@@ -195,8 +187,7 @@ def _build_www_authenticate_value(error: str, description: str) -> str:
     safe_error = error.replace('"', r"\"")
     safe_description = description.replace('"', r"\"")
     parts = [
-        f'error="{safe_error}"',
-        f'error_description="{safe_description}"',
+        f'error="{safe_error}"error_description="{safe_description}"',
     ]
     resource_metadata = _resource_metadata_url()
     if resource_metadata:
@@ -446,11 +437,6 @@ async def _call_tool_request(req: types.CallToolRequest) -> types.ServerResult:
     tool_name = req.params.name
 
     arguments = req.params.arguments or {}
-    if not _get_bearer_token_from_request():
-        return _oauth_error_result(
-            "Authentication required: no access token provided.",
-            description="No access token was provided",
-        )
 
     if tool_name == SEARCH_TOOL_NAME:
         meta = _tool_invocation_meta(CAROUSEL_WIDGET)
@@ -469,6 +455,12 @@ async def _call_tool_request(req: types.CallToolRequest) -> types.ServerResult:
         )
 
     if tool_name == PAST_ORDERS_TOOL_NAME:
+        if not _get_bearer_token_from_request():
+            return _oauth_error_result(
+                "Authentication required: no access token provided.",
+                description="No access token was provided",
+            )
+
         meta = _tool_invocation_meta(PAST_ORDERS_WIDGET)
         limit = arguments.get("limit")
         try:
