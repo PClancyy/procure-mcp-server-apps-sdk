@@ -39,6 +39,7 @@ The MCP servers in this demo highlight how each tool can light up widgets by com
 - `solar-system_server_python/` – Python MCP server for the 3D solar system widget.
 - `kitchen_sink_server_node/` – Node MCP server for the kitchen-sink-lite widget.
 - `kitchen_sink_server_python/` – Python MCP server for the kitchen-sink-lite widget.
+- `authenticated_server_python/` – Python MCP server that demonstrates authenticated tool calls.
 - `build-all.mts` – Vite build orchestrator that produces hashed bundles for every widget entrypoint.
 
 ### Kitchen sink lite overview
@@ -104,8 +105,11 @@ The repository ships several demo MCP servers that highlight different widget bu
 
 - **Pizzaz (Node & Python)** – pizza-inspired collection of tools and components
 - **Solar system (Python)** – 3D solar system viewer
+  <<<<<<< HEAD
+- # **Authenticated (Python)** – set of tools that require different levels of OAuth
 - **Kitchen sink lite (Node & Python)** – minimal widget + server pairing that demonstrates tool output, widget state, `callTool`, and host helpers
 - **Shopping cart (Python)** – simple shopping cart widget that demonstrates how to use `widgetSessionId` to keep state between tool calls
+  > > > > > > > 1243be83efb820fcc288f7359bb67446e14b74ec
 
 ### Pizzaz Node server
 
@@ -121,6 +125,15 @@ python -m venv .venv
 source .venv/bin/activate
 pip install -r pizzaz_server_python/requirements.txt
 uvicorn pizzaz_server_python.main:app --port 8000
+```
+
+### Authenticated Python server
+
+```bash
+python -m venv .venv
+source .venv/bin/activate
+pip install -r authenticated_server_python/requirements.txt
+uvicorn authenticated_python_server.main:app --port 8000
 ```
 
 ### Solar system Python server

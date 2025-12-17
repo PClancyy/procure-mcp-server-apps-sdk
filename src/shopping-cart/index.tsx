@@ -195,7 +195,7 @@ function App() {
     const baseItems = Array.isArray(baseState.items) ? baseState.items : [];
     const incomingCartId =
       typeof (toolOutput as { cartId?: unknown } | null)?.cartId === "string"
-        ? ((toolOutput as { cartId?: string }).cartId ?? undefined)
+        ? (toolOutput as { cartId?: string }).cartId ?? undefined
         : undefined;
 
     const itemsByName = new Map<string, CartItem>();
@@ -220,7 +220,7 @@ function App() {
 
     // Update cartState with the new state that includes the new items
     // Updating cartState automatically updates window.openai.widgetState.
-    setCartState(nextState);
+    setCartState(nextState as CartWidgetState);
   }, [toolOutput, toolResponseMetadata]);
 
   function getIconForItem(name: string) {

@@ -22,6 +22,8 @@ const targets: string[] = [
   "pizzaz-list",
   "pizzaz-albums",
   "pizzaz-shop",
+  "mixed-auth-search",
+  "mixed-auth-past-orders",
   "kitchen-sink-lite",
   "shopping-cart",
 ];
