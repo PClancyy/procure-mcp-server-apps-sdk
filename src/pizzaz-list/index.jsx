@@ -103,12 +103,9 @@ function App() {
           )}
         </div>
         <div className="sm:hidden px-0 pt-2 pb-2">
-          <button
-            type="button"
-            className="w-full cursor-pointer inline-flex items-center justify-center rounded-full bg-[#F46C21] text-white px-4 py-2 font-medium hover:opacity-90 active:opacity-100"
-          >
+          <Button color="primary" variant="solid" size="md" block>
             Save List
-          </button>
+          </Button>
         </div>
       </div>
     </div>
