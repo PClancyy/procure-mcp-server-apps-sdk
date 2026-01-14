@@ -92,50 +92,14 @@ function widgetInvocationMeta(widget: PizzazWidget) {
 
 const widgets: PizzazWidget[] = [
   {
-    id: "pizza-map",
-    title: "Show Pizza Map",
-    templateUri: "ui://widget/pizza-map.html",
-    invoking: "Hand-tossing a map",
-    invoked: "Served a fresh map",
-    html: readWidgetHtml("pizzaz"),
-    responseText: "Rendered a pizza map!",
-  },
-  {
-    id: "pizza-carousel",
-    title: "Show Pizza Carousel",
-    templateUri: "ui://widget/pizza-carousel.html",
-    invoking: "Carousel some spots",
-    invoked: "Served a fresh carousel",
-    html: readWidgetHtml("pizzaz-carousel"),
-    responseText: "Rendered a pizza carousel!",
-  },
-  {
-    id: "pizza-albums",
-    title: "Show Pizza Album",
-    templateUri: "ui://widget/pizza-albums.html",
-    invoking: "Hand-tossing an album",
-    invoked: "Served a fresh album",
-    html: readWidgetHtml("pizzaz-albums"),
-    responseText: "Rendered a pizza album!",
-  },
-  {
-    id: "pizza-list",
-    title: "Show Pizza List",
-    templateUri: "ui://widget/pizza-list.html",
-    invoking: "Hand-tossing a list",
-    invoked: "Served a fresh list",
-    html: readWidgetHtml("pizzaz-list"),
-    responseText: "Rendered a pizza list!",
-  },
-  {
-    id: "pizza-shop",
-    title: "Open Pizzaz Shop",
-    templateUri: "ui://widget/pizza-shop.html",
-    invoking: "Opening the shop",
-    invoked: "Shop opened",
-    html: readWidgetHtml("pizzaz-shop"),
-    responseText: "Rendered the Pizzaz shop!",
-  },
+    id: "companies-list",
+    title: "Show CH list",
+    templateUri: "ui://widget/companies-list.html",
+    invoking: "Hand-tossing a CH Query",
+    invoked: "Served a fresh CH Query",
+    html: readWidgetHtml("company-list"),
+    responseText: "Returned a CH Query!",
+  }
 ];
 
 const widgetsById = new Map<string, PizzazWidget>();
@@ -149,17 +113,17 @@ widgets.forEach((widget) => {
 const toolInputSchema = {
   type: "object",
   properties: {
-    pizzaTopping: {
+    companySearch: {
       type: "string",
-      description: "Topping to mention when rendering the widget.",
+      description: "Company search rendering.",
     },
   },
-  required: ["pizzaTopping"],
+  required: ["companySearch"],
   additionalProperties: false,
 } as const;
 
 const toolInputParser = z.object({
-  pizzaTopping: z.string(),
+  companySearch: z.string(),
 });
 
 const tools: Tool[] = widgets.map((widget) => ({
@@ -252,6 +216,7 @@ function createPizzazServer(): Server {
   server.setRequestHandler(
     CallToolRequestSchema,
     async (request: CallToolRequest) => {
+        console.log("🔥 NEW HANDLER RUNNING");
       const widget = widgetsById.get(request.params.name);
 
       if (!widget) {
@@ -259,6 +224,14 @@ function createPizzazServer(): Server {
       }
 
       const args = toolInputParser.parse(request.params.arguments ?? {});
+      const query = args.companySearch;
+
+      // 🔥 Call your base app API
+      const apiResponse = await fetch(
+        `http://localhost:3000/api/company/search?q=${encodeURIComponent(query)}`
+      );
+
+      const data = await apiResponse.json();
 
       return {
         content: [
@@ -268,12 +241,13 @@ function createPizzazServer(): Server {
           },
         ],
         structuredContent: {
-          pizzaTopping: args.pizzaTopping,
+          companies: data.items, // CH returns { items: [...] }
         },
         _meta: widgetInvocationMeta(widget),
       };
     }
   );
+
 
   return server;
 }
@@ -391,7 +365,7 @@ httpServer.on("clientError", (err: Error, socket) => {
   socket.end("HTTP/1.1 400 Bad Request\r\n\r\n");
 });
 
-httpServer.listen(port, () => {
+httpServer.listen(port, "0.0.0.0", () => {
   console.log(`Pizzaz MCP server listening on http://localhost:${port}`);
   console.log(`  SSE stream: GET http://localhost:${port}${ssePath}`);
   console.log(
