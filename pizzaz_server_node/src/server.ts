@@ -228,7 +228,7 @@ function createPizzazServer(): Server {
 
       // 🔥 Call your base app API
       const apiResponse = await fetch(
-        `http://localhost:3000/api/company/search?q=${encodeURIComponent(query)}`
+        `https://www.procureint.com/api/company/search?q=${encodeURIComponent(query)}`
       );
 
       const data = await apiResponse.json();
